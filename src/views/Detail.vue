@@ -88,7 +88,7 @@
                         return Promise.reject(error);
                     }
                 });
-                fetch('http://www.omdbapi.com/?plot=full&i='+this.id+'&apikey='+this.key, {
+                fetch('https://www.omdbapi.com/?plot=full&i='+this.id+'&apikey='+this.key, {
                     method: 'GET',
 
                 })

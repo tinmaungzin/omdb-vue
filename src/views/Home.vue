@@ -115,7 +115,7 @@
                         return Promise.reject(error);
                     }
                 });
-                fetch('http://www.omdbapi.com/?s=' + query + '&page=' + page + '&apikey=' + this.key, {
+                fetch('https://www.omdbapi.com/?s=' + query + '&page=' + page + '&apikey=' + this.key, {
                     method: 'GET',
 
                 })
