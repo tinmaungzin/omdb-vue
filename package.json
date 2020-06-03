@@ -2,7 +2,8 @@
   "name": "yoteshin",
   "version": "0.1.0",
   "engines": {
-    "node": "12.16.x"
+    "node": "12.16.x",
+    "npm": "6.13.x"
   },
   "private": true,
   "scripts": {
