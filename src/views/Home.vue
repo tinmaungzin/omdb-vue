@@ -1,11 +1,29 @@
 <template>
     <div>
-        <form style="margin-left: 30%; margin-bottom: 50px;">
-            <div class="form-row">
+        <form style="margin-left: 30%; margin-bottom: 50px; ">
+            <div class="form" >
                 <div class="col-7">
-                    <input v-on:keyup="fetchMovies(query)" v-model="query" type="text" class="form-control"
+                    <input v-on:keyup="fetchMovies(query,currentPage,true)" v-model="query" type="text" class="form-control"
                            placeholder="Search Movie">
                 </div>
+
+                <div v-if="results" class="col-5" style="z-index: 5; position: absolute;" >
+
+                    <ul style="background-color: white; border-radius: 5px; ">
+                        <li v-for="result in results" :key="result" style="list-style: none; height: 80px;  border-radius: 5px; border-bottom: 1px gray solid; cursor: pointer;" >
+                            <img :src="result.Poster" style="width: 60px; height: 80px; float: left; border-radius: 5px; border-bottom: 1px gray solid" :alt="result.Title">
+
+                            <router-link :to="{ name: 'Detail', params: {id: result.imdbID}}">
+                                <span style="float: left; margin: 5px;">
+                                     {{result.Title}} ({{result.Year}})
+                                </span>
+                            </router-link>
+                        </li>
+
+
+                    </ul>
+                </div>
+
             </div>
         </form>
         <main class="main-content">
@@ -31,7 +49,7 @@
                         </div>
                     </div>
                     <div v-if="totalMovies" class="pagination">
-                        <a v-on:click="setPage(index)" style="margin-right: 10px; cursor: pointer"
+                        <a v-on:click="fetchMovies(initQuery,index,false)" style="margin-right: 10px; cursor: pointer"
                            v-for="index in pages" :key="index"
                            v-bind:class="{'current': isCurrent(index)}" class="page-number">{{index}}</a>
                     </div>
@@ -57,7 +75,9 @@
                 totalMovies: 0,
                 pages: 1,
                 currentPage: 1,
-                query: '2020'
+                initQuery: '2020',
+                query: '',
+                results: []
             }
         },
         components: {},
@@ -68,8 +88,8 @@
                 return page === this.currentPage;
             },
 
-            fetchMovies() {
-                this.movies = [];
+            fetchMovies(query,page,isSearch) {
+                this.results = [];
                 fetchIntercept.register({
                     request: function (url, config) {
                         // Modify the url or config here
@@ -95,25 +115,27 @@
                         return Promise.reject(error);
                     }
                 });
-                fetch('http://www.omdbapi.com/?s=' + this.query + '&page=' + this.currentPage + '&apikey=' + this.key, {
+                fetch('http://www.omdbapi.com/?s=' + query + '&page=' + page + '&apikey=' + this.key, {
                     method: 'GET',
 
                 })
                     .then(response => response.json())
                     .then(data => {
-                        this.movies = data.Search;
-                        this.totalMovies = data.totalResults;
-                        this.pages = Math.round(this.totalMovies / 10);
+                        if(isSearch){
+                            this.results= data.Search;
+                        }else{
+                            this.movies = data.Search;
+                            this.totalMovies = data.totalResults;
+                            this.pages = Math.round(this.totalMovies / 10);
+                        }
+
                     });
 
             },
-            setPage(page) {
-                this.currentPage = page;
-                this.fetchMovies();
-            }
+
         },
         created() {
-            this.fetchMovies();
+            this.fetchMovies(this.initQuery,this.currentPage,false);
         },
     }
 </script>
