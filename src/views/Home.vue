@@ -3,7 +3,7 @@
         <form style="margin-left: 30%; margin-bottom: 50px; ">
             <div class="form" >
                 <div class="col-7">
-                    <input v-on:keyup="fetchMovies(query,currentPage,true)" v-model="query" type="text" class="form-control"
+                    <input v-on:keyup="fetchMovies(query,1,true)" v-model="query" type="text" class="form-control"
                            placeholder="Search Movie">
                 </div>
 
@@ -90,6 +90,7 @@
 
             fetchMovies(query,page,isSearch) {
                 this.results = [];
+                this.currentPage = page;
                 fetchIntercept.register({
                     request: function (url, config) {
                         // Modify the url or config here
